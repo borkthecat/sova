@@ -54,13 +54,13 @@ model PaymentHistory {
 model Action {
   id          String   @id @default(uuid())
   vendorId    String?
-  type        String   // SEND_PAYMENT | UPDATE_PAYEE_BANK_DETAILS
-  status      String   @default("PROPOSED") // state machine
-  payload     String   // JSON
-  sourceContext String // JSON
+  type        String
+  status      String   @default("PROPOSED")
+  payload     String
+  sourceContext String
   actionHash  String?
   riskScore   Int      @default(0)
-  decision    String?  // ALLOW | REQUIRE_APPROVAL
+  decision    String?
   idempotencyKey String @unique
   paymentFingerprint String?
   sourceFingerprint String?
@@ -84,7 +84,7 @@ model Approval {
   id         String   @id @default(uuid())
   actionId   String   @unique
   reviewerId String?
-  decision   String?  // APPROVED | REJECTED
+  decision   String?
   actionHash String?
   decidedAt  DateTime?
   createdAt  DateTime @default(now())
@@ -97,8 +97,8 @@ model Execution {
   actionId       String   @unique
   idempotencyKey String   @unique
   transactionId  String?
-  status         String   // EXECUTED | FAILED
-  result         String?  // JSON
+  status         String
+  result         String?
   executedAt     DateTime @default(now())
 
   action Action @relation(fields: [actionId], references: [id])
@@ -123,8 +123,8 @@ model User {
   id       String @id @default(uuid())
   name     String
   email    String @unique
-  role     String // APPROVER | VIEWER
-  token    String @unique // simple demo token
+  role     String
+  token    String @unique
   createdAt DateTime @default(now())
 }
 
@@ -132,7 +132,7 @@ model InvoiceApprovalRecord {
   id         String   @id @default(uuid())
   invoiceId  String
   vendorId   String
-  status     String   // INVOICE_RECEIVED | INVOICE_APPROVED
+  status     String
   createdAt  DateTime @default(now())
 
   @@index([invoiceId, vendorId])

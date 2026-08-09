@@ -7,6 +7,9 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./data/agentguard.ci.db
+      FINGERPRINT_SECRET: sova-ci-fingerprint-secret
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,6 +20,7 @@ jobs:
             backend/package-lock.json
             frontend/package-lock.json
       - run: npm ci --prefix backend && npm ci --prefix frontend
+      - run: mkdir -p backend/prisma/data && touch backend/prisma/data/agentguard.ci.db
       - run: npm run demo:reset
       - run: npm --prefix backend run build && npm --prefix frontend run build
       - run: npm --prefix frontend run lint && npm run test
