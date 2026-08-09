@@ -1,0 +1,50 @@
+{
+  "name": "sova-backend",
+  "version": "1.0.0",
+  "description": "Sova - Verify before agents act",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run src/tests/api.integration.test.ts",
+    "test:e2e": "playwright test",
+    "test:concurrency": "tsx src/tests/concurrency.e2e.ts",
+    "eval": "tsx src/evaluation/runner.ts",
+    "eval:holdout": "tsx src/evaluation/holdoutRunner.ts",
+    "seed": "tsx src/demo/seed.ts",
+    "setup": "prisma db push && tsx src/demo/seed.ts",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "@types/uuid": "^10.0.0",
+    "prisma": "^5.22.0",
+    "supertest": "^7.0.0",
+    "@types/supertest": "^6.0.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "esbuild@0.28.1": true,
+    "esbuild@0.21.5": true,
+    "prisma@5.22.0": true
+  }
+}

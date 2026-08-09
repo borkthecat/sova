@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Vendor {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  domain      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bankAccounts VendorBankAccount[]
+  payments     PaymentHistory[]
+  actions      Action[]
+}
+
+model VendorBankAccount {
+  id          String   @id @default(uuid())
+  vendorId    String
+  fingerprint String   @unique
+  last4       String
+  verifiedAt  DateTime @default(now())
+  isActive    Boolean  @default(true)
+  verificationSource String?
+  verifiedBy  String?
+  approvalActionId String?
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+}
+
+model PaymentHistory {
+  id          String   @id @default(uuid())
+  vendorId    String
+  amount      Float
+  currency    String
+  accountLast4 String
+  accountFingerprint String
+  executedAt  DateTime @default(now())
+  transactionId String?
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+}
+
+model Action {
+  id          String   @id @default(uuid())
+  vendorId    String?
+  type        String   // SEND_PAYMENT | UPDATE_PAYEE_BANK_DETAILS
+  status      String   @default("PROPOSED") // state machine
+  payload     String   // JSON
+  sourceContext String // JSON
+  actionHash  String?
+  riskScore   Int      @default(0)
+  decision    String?  // ALLOW | REQUIRE_APPROVAL
+  idempotencyKey String @unique
+  paymentFingerprint String?
+  sourceFingerprint String?
+  duplicateOfActionId String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vendor   Vendor?  @relation(fields: [vendorId], references: [id])
+  approval Approval?
+  execution Execution?
+  auditEntries AuditEntry[]
+
+  @@index([status])
+  @@index([vendorId])
+  @@index([paymentFingerprint])
+  @@index([sourceFingerprint])
+}
+
+model Approval {
+  id         String   @id @default(uuid())
+  actionId   String   @unique
+  reviewerId String?
+  decision   String?  // APPROVED | REJECTED
+  actionHash String?
+  decidedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  action Action @relation(fields: [actionId], references: [id])
+}
+
+model Execution {
+  id             String   @id @default(uuid())
+  actionId       String   @unique
+  idempotencyKey String   @unique
+  transactionId  String?
+  status         String   // EXECUTED | FAILED
+  result         String?  // JSON
+  executedAt     DateTime @default(now())
+
+  action Action @relation(fields: [actionId], references: [id])
+}
+
+model AuditEntry {
+  id           String   @id @default(uuid())
+  actionId     String
+  eventType    String
+  payload      String   // JSON
+  previousHash String?
+  eventHash    String
+  createdAt    DateTime @default(now())
+
+  action Action @relation(fields: [actionId], references: [id])
+
+  @@index([actionId])
+  @@index([createdAt])
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  role     String // APPROVER | VIEWER
+  token    String @unique // simple demo token
+  createdAt DateTime @default(now())
+}
+
+model InvoiceApprovalRecord {
+  id         String   @id @default(uuid())
+  invoiceId  String
+  vendorId   String
+  status     String   // INVOICE_RECEIVED | INVOICE_APPROVED
+  createdAt  DateTime @default(now())
+
+  @@index([invoiceId, vendorId])
+}

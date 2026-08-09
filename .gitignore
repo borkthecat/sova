@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+*.log
+.env
+backend/.env
+backend/data/
+backend/prisma/data/
+design-reference/
+.DS_Store
