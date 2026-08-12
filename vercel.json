@@ -9,7 +9,8 @@
       "root": "backend",
       "framework": "express",
       "entrypoint": "index.ts",
-      "installCommand": "npm install"
+      "installCommand": "npm install",
+      "includeFiles": ["node_modules/**"]
     }
   },
   "rewrites": [
