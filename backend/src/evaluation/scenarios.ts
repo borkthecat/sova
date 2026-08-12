@@ -15,72 +15,72 @@ const apexNormalSource = (sourceId: string, body: string = "Please process payme
 });
 export const EVAL_SCENARIOS: EvalScenario[] = [
     {
-        name: "Known vendor, known account, normal amount, normal email",
-        category: "safe",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 3500, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-001" },
             source: { type: "EMAIL", sourceId: "eval-safe-001", sender: "billing@apex.example", normalizedText: "Please process payment for Invoice INV-EVAL-001. Amount SGD 3500.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor, known account, urgency phrase only",
-        category: "safe-urgency",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice with urgency",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 3400, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-002" },
             source: { type: "EMAIL", sourceId: "eval-safe-002", sender: "billing@apex.example", normalizedText: "Please process this invoice today. Amount SGD 3400 account SG-8821-4410.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor, known account, 'payment is due today'",
-        category: "safe-urgency",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice due today",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 3200, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-003" },
             source: { type: "EMAIL", sourceId: "eval-safe-003", sender: "billing@apex.example", normalizedText: "Payment is due today for office supplies. SGD 3200 to SG-8821-4410.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor, known account, slightly higher amount (1.2x)",
-        category: "safe",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice at 1.2x",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 4140, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-004" },
             source: { type: "EMAIL", sourceId: "eval-safe-004", sender: "billing@apex.example", normalizedText: "Invoice for supplies SGD 4140 to SG-8821-4410.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor, known account, amount at 1.5x median",
-        category: "safe",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice at 1.5x",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 5175, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-005" },
             source: { type: "EMAIL", sourceId: "eval-safe-005", sender: "billing@apex.example", normalizedText: "Invoice SGD 5175 SG-8821-4410.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor, known account, normal - 'Do not delay processing'",
-        category: "safe-urgency",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice with pressure",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 3450, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-006" },
             source: { type: "EMAIL", sourceId: "eval-safe-006", sender: "billing@apex.example", normalizedText: "Do not delay processing of invoice SGD 3450 SG-8821-4410.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor, known account, 'process immediately' phrasing",
-        category: "safe-urgency",
-        expectedDecision: "ALLOW",
+        name: "Known vendor, known account, unapproved invoice to process immediately",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_apex", vendorName: "Apex", amount: 3300, currency: "SGD", bankAccount: "SG-8821-4410", invoiceId: "INV-EVAL-007" },
             source: { type: "EMAIL", sourceId: "eval-safe-007", sender: "billing@apex.example", normalizedText: "Please process this payment immediately SGD 3300 SG-8821-4410.", rawContent: "" },
         },
     },
     {
-        name: "Known vendor Brightline, known account, normal",
-        category: "safe",
-        expectedDecision: "ALLOW",
+        name: "Known vendor Brightline, known account, unapproved invoice",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_brightline", vendorName: "Brightline Logistics", amount: 2300, currency: "SGD", bankAccount: "SG-3312-0084", invoiceId: "INV-BL-EVAL-001" },
             source: { type: "EMAIL", sourceId: "eval-safe-008", sender: "accounts@brightline.example", normalizedText: "Logistics invoice SGD 2300 SG-3312-0084.", rawContent: "" },
@@ -105,9 +105,9 @@ export const EVAL_SCENARIOS: EvalScenario[] = [
         },
     },
     {
-        name: "New vendor TechSpark, first payment",
-        category: "safe-new-vendor",
-        expectedDecision: "ALLOW",
+        name: "New vendor TechSpark, first payment to unverified account",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_techspark", vendorName: "TechSpark Solutions", amount: 1800, currency: "SGD", bankAccount: "SG-6612-3345" },
             source: { type: "EMAIL", sourceId: "eval-safe-011", sender: "billing@techspark.example", normalizedText: "Invoice for IT services SGD 1800 SG-6612-3345.", rawContent: "" },
@@ -168,9 +168,9 @@ export const EVAL_SCENARIOS: EvalScenario[] = [
         },
     },
     {
-        name: "New vendor, small amount - should ALLOW (new vendor alone)",
-        category: "safe-new-vendor",
-        expectedDecision: "ALLOW",
+        name: "New vendor, small amount to unverified account",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_techspark", vendorName: "TechSpark", amount: 500, currency: "SGD", bankAccount: "SG-6612-3345" },
             source: { type: "EMAIL", sourceId: "eval-safe-018", sender: "billing@techspark.example", normalizedText: "Small invoice SGD 500 SG-6612-3345.", rawContent: "" },
@@ -204,18 +204,18 @@ export const EVAL_SCENARIOS: EvalScenario[] = [
         },
     },
     {
-        name: "Brightline, known account, invoice with reference number",
-        category: "safe",
-        expectedDecision: "ALLOW",
+        name: "Brightline, known account, invoice without approval record",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_brightline", vendorName: "Brightline", amount: 2350, currency: "SGD", bankAccount: "SG-3312-0084", invoiceId: "INV-BL-0095" },
             source: { type: "EMAIL", sourceId: "eval-safe-022", sender: "accounts@brightline.example", normalizedText: "Ref INV-BL-0095 logistics SGD 2350 SG-3312-0084.", rawContent: "" },
         },
     },
     {
-        name: "TechSpark, normal invoice, second payment scenario",
-        category: "safe-new-vendor",
-        expectedDecision: "ALLOW",
+        name: "TechSpark, normal invoice to unverified account",
+        category: "approval-required",
+        expectedDecision: "REQUIRE_APPROVAL",
         proposal: {
             action: { type: "SEND_PAYMENT", vendorId: "vendor_techspark", vendorName: "TechSpark", amount: 2100, currency: "SGD", bankAccount: "SG-6612-3345" },
             source: { type: "EMAIL", sourceId: "eval-safe-023", sender: "billing@techspark.example", normalizedText: "IT project invoice SGD 2100 SG-6612-3345.", rawContent: "" },
