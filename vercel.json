@@ -6,9 +6,9 @@
       "framework": "vite"
     },
     "backend": {
-      "root": "backend",
+      "root": ".",
       "framework": "express",
-      "entrypoint": "index.ts",
+      "entrypoint": "api/index.ts",
       "installCommand": "npm install",
       "includeFiles": ["node_modules/**"]
     }
