@@ -4,7 +4,31 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/inbox",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo-run",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/approvals",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/audit",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/vendors",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/policies",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/attack-lab",
       "destination": "/index.html"
     }
   ]
