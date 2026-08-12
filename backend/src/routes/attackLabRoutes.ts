@@ -2,6 +2,7 @@ import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { processInvoice } from "../agent/invoiceAgent";
 import { agentGuard } from "../agentguard/AgentGuard";
+import { getPrisma } from "../database/client";
 const router = Router();
 interface AttackLabRequest {
     vendorId?: string;
@@ -78,7 +79,6 @@ ${hiddenBlock}
     }
     try {
         const result = await agentGuard.submitProposal({ action, source });
-        const { getPrisma } = await import("../database/client");
         const prisma = getPrisma();
         const evalEntry = await prisma.auditEntry.findFirst({
             where: { actionId: result?.id, eventType: "EVALUATION_COMPLETE" },

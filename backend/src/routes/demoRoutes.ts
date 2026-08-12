@@ -2,6 +2,7 @@ import { Router } from "express";
 import { DEMO_ATTACHMENTS, DEMO_EMAILS } from "../demo/demoEmails";
 import { processInvoice } from "../agent/invoiceAgent";
 import { agentGuard } from "../agentguard/AgentGuard";
+import { getPrisma } from "../database/client";
 const router = Router();
 router.get("/emails", (req, res) => {
     res.json(DEMO_EMAILS.map((e) => ({
@@ -40,7 +41,6 @@ router.post("/emails/:id/process", async (req, res) => {
         };
         const proposal = await processInvoice(source);
         const result = await agentGuard.submitProposal(proposal);
-        const { getPrisma } = await import("../database/client");
         const evalEntry = await getPrisma().auditEntry.findFirst({
             where: { actionId: result?.id, eventType: "EVALUATION_COMPLETE" },
         });
