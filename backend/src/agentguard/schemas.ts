@@ -55,6 +55,8 @@ export interface EvaluationResult {
     counterfactual: string;
     actionHash: string;
     canonicalAction?: AgentAction;
+    // Only a vendor matched to trusted metadata may be stored as an Action relation.
+    trustedVendorId?: string;
 }
 export type ActionStatus = "PROPOSED" | "EVALUATING" | "ALLOWED" | "PENDING_APPROVAL" | "APPROVED" | "REJECTED" | "EXECUTING" | "EXECUTED" | "FAILED";
 export const VALID_TRANSITIONS: Record<ActionStatus, ActionStatus[]> = {

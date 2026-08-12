@@ -1,6 +1,6 @@
 import { Routes, Route, NavLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Bell, Building2, ClipboardList, FileText, FlaskConical, Inbox, LayoutDashboard, SlidersHorizontal } from 'lucide-react';
+import { Bell, Building2, ClipboardList, FileText, FlaskConical, Inbox, LayoutDashboard, Play, SlidersHorizontal } from 'lucide-react';
 import Overview from './pages/Overview';
 import InboxPage from './pages/Inbox';
 import ApprovalsPage from './pages/Approvals';
@@ -8,6 +8,7 @@ import AuditLogPage from './pages/AuditLog';
 import AttackLabPage from './pages/AttackLab';
 import VendorsPage from './pages/Vendors';
 import PoliciesPage from './pages/Policies';
+import DemoRunPage from './pages/DemoRun';
 import { api } from './api/client';
 type NavItemProps = {
     to: string;
@@ -33,6 +34,7 @@ export default function App() {
         <nav>
           <NavItem to="/" icon={LayoutDashboard} label="Overview"/>
           <NavItem to="/inbox" icon={Inbox} label="Inbox"/>
+          <NavItem to="/demo-run" icon={Play} label="Demo run"/>
           <NavItem to="/approvals" icon={ClipboardList} label="Approvals" badge={pendingCount}/>
         </nav>
         <p className="nav-heading nav-heading-spaced">Records & control</p>
@@ -60,6 +62,7 @@ export default function App() {
         <main className="page-content"><Routes>
           <Route path="/" element={<Overview />}/>
           <Route path="/inbox" element={<InboxPage />}/>
+          <Route path="/demo-run" element={<DemoRunPage />}/>
           <Route path="/approvals" element={<ApprovalsPage />}/>
           <Route path="/audit" element={<AuditLogPage />}/>
           <Route path="/vendors" element={<VendorsPage />}/>

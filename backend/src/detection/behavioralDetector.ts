@@ -47,12 +47,13 @@ export async function analyzeBehavior(action: AgentAction, vendor: VendorInfo | 
             });
         }
         else if (!isKnownBankAccount && previousAmounts.length === 0) {
+            hardPoliciesTriggered.push("NEW_VENDOR_UNVERIFIED_ACCOUNT");
             signals.push({
                 id: "NEW_VENDOR_NEW_ACCOUNT",
                 category: "BEHAVIORAL",
-                severity: 10,
+                severity: 50,
                 title: "New vendor, unverified bank account",
-                explanation: `No previous payments exist for ${vendor.name}. The bank account cannot be verified against historical records.`,
+                explanation: `No previous payments exist for ${vendor.name}. The bank account cannot be verified against historical records and requires human review.`,
             });
         }
         if (historicalMedian !== null && previousAmounts.length > 0) {
@@ -85,12 +86,13 @@ export async function analyzeBehavior(action: AgentAction, vendor: VendorInfo | 
                     where: { invoiceId, vendorId: vendor.id },
                 });
                 if (!approvalRecord) {
+                    hardPoliciesTriggered.push("MISSING_INVOICE_APPROVAL");
                     signals.push({
                         id: "MISSING_APPROVAL_TRAIL",
                         category: "BEHAVIORAL",
-                        severity: 25,
+                        severity: 50,
                         title: "Missing invoice approval record",
-                        explanation: `Invoice ${invoiceId} has no prior approval record in the system. A payment without an approved invoice requires additional review.`,
+                        explanation: `Invoice ${invoiceId} has no prior approval record in the system. It must be approved before payment can be executed.`,
                     });
                 }
             }

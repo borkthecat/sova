@@ -72,6 +72,10 @@ ${hiddenBlock}
             invoiceId: body.invoiceId,
         };
     }
+    if (action.type === "SEND_PAYMENT" && (action.amount <= 0 || action.bankAccount === "UNKNOWN")) {
+        res.status(400).json({ error: "Include a valid SGD amount and bank account in the email text." });
+        return;
+    }
     try {
         const result = await agentGuard.submitProposal({ action, source });
         const { getPrisma } = await import("../database/client");
@@ -83,6 +87,7 @@ ${hiddenBlock}
         res.json({
             success: true,
             actionId: result?.id,
+            duplicate: (result as any)?.duplicate === true,
             extractedAction: action,
             status: result?.status,
             decision: result?.decision,

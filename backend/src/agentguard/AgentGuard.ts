@@ -56,7 +56,9 @@ export class AgentGuard {
             orderBy: { createdAt: "desc" },
             include: { approval: true, execution: true },
         });
-        if (replay) {
+        // A replay only inherits an earlier decision when this newly submitted source
+        // is also safe. New malicious or conflicting content must be held and audited.
+        if (replay && evaluation.decision === "ALLOW") {
             await auditService.appendEntry({ actionId: replay.id, eventType: "DUPLICATE_OR_REPLAY_BLOCKED", payload: { replayedSource: replay.sourceFingerprint === currentSourceFingerprint, duplicatePayment: replay.paymentFingerprint === currentPaymentFingerprint } });
             return { ...replay, duplicate: true };
         }
@@ -64,7 +66,8 @@ export class AgentGuard {
         const actionRecord = await prisma.action.create({
             data: {
                 id: actionId,
-                vendorId: canonicalAction.vendorId,
+                // Never create a database relationship from an untrusted vendor claim.
+                vendorId: evaluation.trustedVendorId ?? null,
                 type: canonicalAction.type,
                 status: "PROPOSED",
                 payload: JSON.stringify(canonicalAction),

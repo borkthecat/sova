@@ -72,7 +72,10 @@ export async function evaluateProposal(proposal: PaymentProposal): Promise<Evalu
                 title: vendorResolution.status === "AMBIGUOUS" ? "Vendor identity is ambiguous" : "Vendor identity is unverified",
                 explanation: vendorResolution.confidenceReasons.join(" "),
             }];
-        const riskResult = computeRisk(contentAnalysis.signals, behavioralAnalysis.signals, identitySignals, [...behavioralAnalysis.hardPoliciesTriggered, ...(vendorResolution.status === "AMBIGUOUS" ? ["VENDOR_IDENTITY_AMBIGUOUS"] : [])]);
+        const identityPolicies = vendorResolution.status === "MATCHED"
+            ? []
+            : [vendorResolution.status === "AMBIGUOUS" ? "VENDOR_IDENTITY_AMBIGUOUS" : "VENDOR_IDENTITY_UNKNOWN"];
+        const riskResult = computeRisk(contentAnalysis.signals, behavioralAnalysis.signals, identitySignals, [...behavioralAnalysis.hardPoliciesTriggered, ...identityPolicies]);
         const actionHash = computeActionHash(canonicalAction, source.sourceId);
         let proposedLast4 = "";
         let verifiedLast4: string | undefined;
@@ -95,6 +98,7 @@ export async function evaluateProposal(proposal: PaymentProposal): Promise<Evalu
             counterfactual,
             actionHash,
             canonicalAction,
+            trustedVendorId: vendorResolution.status === "MATCHED" ? vendorResolution.vendorId : undefined,
         };
     }
     catch (err) {

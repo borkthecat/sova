@@ -93,7 +93,7 @@ function extractFromText(text: string, source: SourceContext): AgentAction {
     const invoiceId = invoiceMatch
         ? (invoiceMatch[1].toUpperCase().startsWith("INV-") ? invoiceMatch[1].toUpperCase() : `INV-${invoiceMatch[1]}`)
         : undefined;
-    const vendorId = guessVendorId(source.sender ?? "");
+    const vendorId = guessVendorId(source.sender ?? "", text);
     const vendorName = guessVendorName(source.sender ?? "", text);
     return {
         type: "SEND_PAYMENT",
@@ -105,21 +105,58 @@ function extractFromText(text: string, source: SourceContext): AgentAction {
         invoiceId,
     };
 }
-function guessVendorId(sender: string): string {
-    if (sender.includes("apex"))
+function guessVendorId(sender: string, text: string): string {
+    const fromText = knownVendorIdFromText(text);
+    if (fromText)
+        return fromText;
+    const normalizedSender = sender.toLowerCase();
+    if (normalizedSender.includes("apex"))
         return "vendor_apex";
-    if (sender.includes("brightline"))
+    if (normalizedSender.includes("brightline"))
         return "vendor_brightline";
+    if (normalizedSender.includes("techspark"))
+        return "vendor_techspark";
     return `vendor_unknown_${Date.now()}`;
 }
 function guessVendorName(sender: string, text: string): string {
-    if (sender.toLowerCase().includes("apex"))
+    const normalizedSender = sender.toLowerCase();
+    const normalizedText = text.toLowerCase();
+    const fromText = knownVendorNameFromText(normalizedText);
+    if (fromText)
+        return fromText;
+    if (normalizedSender.includes("apex"))
         return "Apex Office Supplies";
-    if (sender.toLowerCase().includes("brightline"))
+    if (normalizedSender.includes("brightline"))
         return "Brightline Logistics";
-    if (text.toLowerCase().includes("apex office"))
+    if (normalizedSender.includes("techspark"))
+        return "TechSpark Solutions";
+    if (normalizedText.includes("apex office"))
         return "Apex Office Supplies";
-    if (text.toLowerCase().includes("brightline"))
+    if (normalizedText.includes("brightline logistics"))
         return "Brightline Logistics";
+    if (normalizedText.includes("techspark solutions"))
+        return "TechSpark Solutions";
+    const labeledVendor = text.match(/(?:vendor|supplier|company)\s*:\s*([^\r\n]+)/i)?.[1]?.trim();
+    if (labeledVendor)
+        return labeledVendor;
     return sender.split("@")[0] ?? "Unknown Vendor";
+}
+function knownVendorIdFromText(text: string): string | undefined {
+    const normalizedText = text.toLowerCase();
+    if (normalizedText.includes("apex office supplies"))
+        return "vendor_apex";
+    if (normalizedText.includes("brightline logistics"))
+        return "vendor_brightline";
+    if (normalizedText.includes("techspark solutions"))
+        return "vendor_techspark";
+    return undefined;
+}
+function knownVendorNameFromText(normalizedText: string): string | undefined {
+    if (normalizedText.includes("apex office supplies"))
+        return "Apex Office Supplies";
+    if (normalizedText.includes("brightline logistics"))
+        return "Brightline Logistics";
+    if (normalizedText.includes("techspark solutions"))
+        return "TechSpark Solutions";
+    return undefined;
 }

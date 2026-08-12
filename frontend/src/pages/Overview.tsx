@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, CheckCircle2, Clock3, ShieldCheck, TriangleAlert } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Clock3, Play, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 function Metric({ label, value, note, tone }: {
@@ -16,6 +16,7 @@ export default function Overview() {
     const held = approvals?.filter((action: any) => action.status === 'PENDING_APPROVAL').slice(0, 4) ?? [];
     return <div className="sova-page sova-overview">
     <div className="sova-page-header"><div><h1>Overview</h1><p>Sova monitors AI-proposed financial actions and holds suspicious transactions before execution.</p></div><div className="sova-header-actions"><Link className="btn-ghost" to="/inbox">Open inbox</Link><Link className="btn-primary" to="/approvals">Review {stats?.heldForReview ?? 0} held actions</Link></div></div>
+    <section className="sova-demo-banner"><div><span className="sova-eyebrow">Hackathon demo</span><h2>Show the payment decision boundary in under a minute.</h2><p>Run a legitimate payment, a concealed bank-change attack, a high-value anomaly, and a duplicate replay through the live backend.</p></div><Link className="btn-primary" to="/demo-run"><Play size={14} fill="currentColor"/>Run guided scenario</Link></section>
     <section className="sova-kpis">
       <Metric label="Actions monitored" value={stats?.paymentsInspected ?? 0} note="All-time local demo" tone="#1061fe"/>
       <Metric label="Auto-executed" value={stats?.automaticallyExecuted ?? 0} note="Known financial identity" tone="#2e9963"/>

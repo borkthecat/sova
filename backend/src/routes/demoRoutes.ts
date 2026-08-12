@@ -40,6 +40,11 @@ router.post("/emails/:id/process", async (req, res) => {
         };
         const proposal = await processInvoice(source);
         const result = await agentGuard.submitProposal(proposal);
+        const { getPrisma } = await import("../database/client");
+        const evalEntry = await getPrisma().auditEntry.findFirst({
+            where: { actionId: result?.id, eventType: "EVALUATION_COMPLETE" },
+        });
+        const evaluation = evalEntry ? JSON.parse(evalEntry.payload) : null;
         res.json({
             success: true,
             emailId: email.id,
@@ -50,6 +55,11 @@ router.post("/emails/:id/process", async (req, res) => {
                 decision: result?.decision,
                 riskScore: result?.riskScore,
                 duplicate: (result as any)?.duplicate === true,
+                contentSignals: evaluation?.contentSignals ?? [],
+                behavioralSignals: evaluation?.behavioralSignals ?? [],
+                systemSignals: evaluation?.systemSignals ?? [],
+                hardPoliciesTriggered: evaluation?.hardPoliciesTriggered ?? [],
+                counterfactual: evaluation?.counterfactual ?? "",
             },
         });
     }

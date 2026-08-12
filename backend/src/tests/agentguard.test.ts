@@ -9,6 +9,7 @@ import { PaymentProposal } from "../agentguard/schemas";
 import { resolveVendorIdentity } from "../vendors/vendorResolution";
 import { csvCell } from "../routes/auditRoutes";
 import { processInvoice } from "../agent/invoiceAgent";
+import { paymentFingerprint } from "../security/fingerprints";
 vi.mock("../database/client", () => ({
     getPrisma: () => ({
         vendor: {
@@ -46,6 +47,25 @@ describe("Custom email extraction", () => {
     it("extracts payment facts from a user-composed email", async () => {
         const proposal = await processInvoice({ type: "EMAIL", sourceId: "custom-email", sender: "billing@apex.example", normalizedText: "Invoice: INV-CUSTOM-1 Amount: SGD 3,500 Account: SG-8821-4410", rawContent: "" });
         expect(proposal.action).toMatchObject({ vendorId: "vendor_apex", vendorName: "Apex Office Supplies", amount: 3500, bankAccount: "SG-8821-4410", invoiceId: "INV-CUSTOM-1" });
+    });
+    it("recognizes every demo vendor from a custom sender or invoice", async () => {
+        const proposal = await processInvoice({ type: "EMAIL", sourceId: "custom-techspark", sender: "billing@techspark.example", normalizedText: "TechSpark Solutions Invoice: INV-TS-42 Amount: SGD 1,800 Account: SG-6612-3345", rawContent: "" });
+        expect(proposal.action).toMatchObject({ vendorId: "vendor_techspark", vendorName: "TechSpark Solutions", amount: 1800, bankAccount: "SG-6612-3345" });
+    });
+    it("keeps a named unknown supplier visible in the extracted proposal", async () => {
+        const proposal = await processInvoice({ type: "EMAIL", sourceId: "custom-new-vendor", sender: "billing@novastation.example", normalizedText: "Vendor: Nova Stationery\nInvoice: INV-NOVA-42\nAmount: SGD 2,400\nAccount: SG-1122-3344", rawContent: "" });
+        expect(proposal.action).toMatchObject({ vendorName: "Nova Stationery", amount: 2400, bankAccount: "SG-1122-3344" });
+    });
+    it("surfaces an invoice vendor that conflicts with the sender", async () => {
+        const proposal = await processInvoice({ type: "EMAIL", sourceId: "custom-identity-conflict", sender: "billing@apex.example", normalizedText: "Brightline Logistics\nInvoice: INV-BL-42\nAmount: SGD 2,300\nAccount: SG-3312-0084", rawContent: "" });
+        expect(proposal.action).toMatchObject({ vendorId: "vendor_brightline", vendorName: "Brightline Logistics" });
+    });
+});
+describe("Payment replay identity", () => {
+    it("treats a changed bank account as a new proposal, never a duplicate", () => {
+        const base = { type: "SEND_PAYMENT" as const, vendorId: "vendor_apex", vendorName: "Apex Office Supplies", amount: 3500, currency: "SGD" as const, invoiceId: "INV-2041" };
+        expect(paymentFingerprint({ ...base, bankAccount: "SG-8821-4410" }, "vendor_apex"))
+            .not.toBe(paymentFingerprint({ ...base, bankAccount: "SG-8821-4414" }, "vendor_apex"));
     });
 });
 describe("Schema Validation", () => {
