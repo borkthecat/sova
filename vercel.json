@@ -18,6 +18,55 @@
       }
     },
     {
+      "source": "/inbox",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/demo-run",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/approvals",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/audit",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/vendors",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/policies",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/attack-lab",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
       "source": "/(.*)",
       "destination": {
         "service": "frontend"
