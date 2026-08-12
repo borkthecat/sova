@@ -1,79 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "frontend": {
-      "root": "frontend",
-      "framework": "vite"
-    },
-    "backend": {
-      "root": ".",
-      "framework": "express",
-      "entrypoint": "api/index.ts",
-      "installCommand": "npm install",
-      "includeFiles": ["node_modules/**"]
-    }
-  },
+  "buildCommand": "npm --prefix frontend ci && npm --prefix frontend run build",
+  "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/api(/.*)?",
-      "destination": {
-        "service": "backend"
-      }
-    },
-    {
-      "source": "/inbox",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/demo-run",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/approvals",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/audit",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/vendors",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/policies",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/attack-lab",
-      "destination": {
-        "service": "frontend",
-        "path": "/index.html"
-      }
-    },
-    {
       "source": "/(.*)",
-      "destination": {
-        "service": "frontend"
-      }
+      "destination": "/index.html"
     }
   ]
 }
