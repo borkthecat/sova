@@ -4,6 +4,7 @@
   "description": "Sova - Verify before agents act",
   "main": "dist/index.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
@@ -18,6 +19,8 @@
     "setup": "prisma db push && tsx src/demo/seed.ts",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
+    "db:push:sqlite": "prisma db push --schema prisma/schema.sqlite.prisma",
+    "db:generate:sqlite": "prisma generate --schema prisma/schema.sqlite.prisma",
     "db:studio": "prisma studio"
   },
   "dependencies": {

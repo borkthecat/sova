@@ -36,10 +36,10 @@ export function createApp() {
     });
     return app;
 }
+const app = createApp();
 export async function startServer() {
     await initPrisma();
     console.log("Database initialized");
-    const app = createApp();
     app.listen(PORT, () => {
         console.log(`
 ╔══════════════════════════════════════════╗
@@ -68,9 +68,10 @@ API endpoints:
 `);
     });
 }
-if (process.env.VITEST === undefined) {
+if (process.env.VITEST === undefined && process.env.VERCEL !== "1") {
     startServer().catch((err) => {
         console.error("Startup failed:", err);
         process.exit(1);
     });
 }
+export default app;

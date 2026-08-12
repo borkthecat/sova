@@ -10,16 +10,21 @@
     "dev:frontend": "cd frontend && npm run dev",
     "seed": "cd backend && npm run seed",
     "demo:reset": "npm run db:setup && npm run seed",
+    "demo:reset:sqlite": "npm run db:setup:sqlite && npm run seed",
     "setup": "npm run install:all && npm run db:setup && npm run seed",
     "db:setup": "cd backend && npx prisma db push",
+    "db:setup:sqlite": "cd backend && npx prisma db push --schema prisma/schema.sqlite.prisma && npx prisma generate --schema prisma/schema.sqlite.prisma",
     "test": "npm run test:backend && npm run test:frontend",
     "test:backend": "npm --prefix backend test",
     "test:frontend": "npm --prefix frontend test",
     "test:integration": "npm --prefix backend run test:integration",
     "test:playwright": "npm --prefix frontend run test:playwright",
     "test:concurrency": "npm run demo:reset && npm --prefix backend run test:concurrency",
+    "test:concurrency:sqlite": "npm run demo:reset:sqlite && npm --prefix backend run test:concurrency",
     "test:e2e": "cd backend && npm run eval",
     "eval": "npm run demo:reset && cd backend && npm run eval",
-    "eval:holdout": "npm run demo:reset && npm --prefix backend run eval:holdout"
+    "eval:sqlite": "npm run demo:reset:sqlite && cd backend && npm run eval",
+    "eval:holdout": "npm run demo:reset && npm --prefix backend run eval:holdout",
+    "eval:holdout:sqlite": "npm run demo:reset:sqlite && npm --prefix backend run eval:holdout"
   }
 }

@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model Vendor {
@@ -109,7 +108,7 @@ model AuditEntry {
   id           String   @id @default(uuid())
   actionId     String
   eventType    String
-  payload      String   // JSON
+  payload      String
   previousHash String?
   eventHash    String
   createdAt    DateTime @default(now())
