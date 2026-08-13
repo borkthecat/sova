@@ -12,7 +12,7 @@ test('attack lab loads an editable example and shows which one is selected', asy
   await page.goto('/attack-lab')
   const selected = page.getByRole('button', { name: /verified payment/i })
   await expect(selected).toHaveClass(/active/)
-  await expect(page.getByLabel('Email / invoice text')).toBeEditable()
+  await expect(page.getByLabel(/Email (?:or|\/) invoice text/i)).toBeEditable()
   const target = page.getByRole('button', { name: /high-value request/i })
   await target.click()
   await expect(target).toHaveClass(/active/)
