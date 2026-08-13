@@ -20,9 +20,11 @@ jobs:
             backend/package-lock.json
             frontend/package-lock.json
       - run: npm ci --prefix backend && npm ci --prefix frontend
+      # Compile against the production PostgreSQL client. The SQLite setup below
+      # regenerates Prisma for isolated test data and intentionally has no Neon adapter.
+      - run: npm --prefix backend run build && npm --prefix frontend run build
       - run: mkdir -p backend/prisma/data && touch backend/prisma/data/agentguard.ci.db
       - run: npm run demo:reset:sqlite
-      - run: npm --prefix backend run build && npm --prefix frontend run build
       - run: npm --prefix frontend run lint && npm run test
       - run: npm run test:concurrency:sqlite
       - run: npm run eval:sqlite && npm run eval:holdout:sqlite
